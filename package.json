@@ -13,10 +13,18 @@
     "prettier": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,scss,md}'"
   },
   "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
     "@hot-loader/react-dom": "^17.0.2",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.1",
+    "@notionhq/client": "^2.2.3",
+    "@tryfabric/martian": "^1.2.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "react-hot-loader": "^4.13.1"
+    "react-hot-loader": "^4.13.1",
+    "turndown": "^7.1.1",
+    "use-chrome-storage": "^1.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",

@@ -2,6 +2,17 @@ import React from 'react';
 import logo from '../../assets/img/logo.svg';
 import './Newtab.css';
 import './Newtab.scss';
+import SmartToySharpIcon from '@mui/icons-material/SmartToySharp';
+import Fab from '@mui/material/Fab';
+
+const fabStyle = {
+  margin: 0,
+  top: 'auto',
+  right: 20,
+  bottom: 20,
+  left: 'auto',
+  position: 'fixed'
+}
 
 const Newtab = () => {
   return (
@@ -20,6 +31,9 @@ const Newtab = () => {
           Learn React Shirish!
         </a>
         <h6>The color of this paragraph is defined using SASS.</h6>
+        <Fab style={fabStyle} aria-label="chatGPT" onClick={() => console.log('fab clicked')}>
+          <SmartToySharpIcon />
+        </Fab>
       </header>
     </div>
   );
