@@ -47,11 +47,21 @@ export const setLocalStorageDataAfterAuth = async (authTokenResponse) => {
   }
 
   await setToLocalStorage(localStorageKey, {
-    'integrationDB': null,
-    'integrationPage': null,
+    'integrationParent': null,
     'authInfo': authTokenResponse
   })
 
+}
+
+export const setIntegrationParent = async (integrationParent) => {
+  const localStorageKey = getLocalStorageKey()
+  const savedRes = await getFromLocalStorage(localStorageKey)
+
+  const savedData = savedRes[localStorageKey]
+
+  savedData['integrationParent'] = integrationParent
+
+  await setToLocalStorage(localStorageKey, savedData)
 }
 
 export const userDataToMap = (userDataFromStorage) => {
@@ -67,13 +77,11 @@ export const userDataToMap = (userDataFromStorage) => {
   const authInfoObj = userDataFromStorage['authInfo']
   const accessToken = authInfoObj.access_token
   const avatarUrl = authInfoObj.workspace_icon
-  const integrationPageId = userDataFromStorage['integrationPage']
-  const integrationDBId = userDataFromStorage['integrationDB']
+  const integrationParent = userDataFromStorage['integrationParent']
 
   userDataMap.set('accessToken', accessToken)
   userDataMap.set('avatarUrl', avatarUrl)
-  userDataMap.set('integrationPageId', integrationPageId)
-  userDataMap.set('integrationDBId', integrationDBId)
+  userDataMap.set('integrationParent', integrationParent)
 
   return userDataMap
 }
@@ -85,5 +93,22 @@ export const getAuthToken = async () => {
   }
   console.log('in getAuthToken ' + [...userDataMap.values()])
   return userDataMap.get('accessToken')
+}
+
+export const disconnectNotion = async () => {
+  const localStorageKey = getLocalStorageKey()
+  try {
+    await deleteFromStorage(localStorageKey)
+  } catch (e) {
+    console.log('failed to delete from storage for key ' + localStorageKey)
+  }
+}
+
+const deleteFromStorage = async (key) => {
+  if (key==null) {
+    console.log('null key given to deleteFromStorage')
+    return
+  }
+  await chrome.storage.local.remove(key)
 }
 

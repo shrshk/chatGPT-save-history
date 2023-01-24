@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./Popup.css";
 import { Button, Grid, SvgIcon, Typography } from "@mui/material";
 import { useChromeStorageLocal } from 'use-chrome-storage'
-import { searchNotion } from '../../../utils/notionClient'
-// import NotionLogoPath from "../../../logos/notion-logo.svg";
-import { getLocalStorageKey, setLocalStorageDataAfterAuth, userDataToMap } from '../../../utils/storageUtil'
+import { getAllLinkedPagesOrDatabases } from '../../../utils/notionClient'
+import { InputLabel, MenuItem, FormControl, Select } from '@mui/material'
+import { getLocalStorageKey, setLocalStorageDataAfterAuth, userDataToMap, disconnectNotion, setIntegrationParent } from '../../../utils/storageUtil'
 
 const style = {
   root: {
@@ -93,8 +93,8 @@ const Popup = () => {
   const localStorageKey = getLocalStorageKey()
 
   const [ notionLinked, setNotionLinked] = useState(false)
-  const [ linkedPageId, setLinkedPageId ] = useState(null)
-  const [ linkedDBId, setLinkedDBId ] = useState(null)
+  const [ selectedIntegrationParentId, setSelectedIntegrationParentId ] = useState('')
+  const [ integratedParents, setIntegratedParents ] = useState([])
 
   const [value, isPersistent, error] = useChromeStorageLocal(localStorageKey);
 
@@ -105,17 +105,52 @@ const Popup = () => {
       if (!userDataMap) {
         return
       }
-      const linkedDBId = userDataMap.get('integrationDBId')
-      if (linkedDBId!=null) {
-        setLinkedDBId(linkedDBId)
-        return
+
+      const selectedIntegrationParent = userDataMap.get('integrationParent')
+      if (selectedIntegrationParent!=null) {
+        setSelectedIntegrationParentId(selectedIntegrationParent?.id)
       }
-      const linkedPageId = userDataMap.get('integrationPageId')
-      if (linkedPageId!=null) {
-        setLinkedPageId(linkedPageId)
-      }
+
     }
   })
+
+  useEffect(() => {
+    const getIntegrationParents = async () => {
+      const allLinkedPagesOrDBs = await getAllLinkedPagesOrDatabases()
+      if (allLinkedPagesOrDBs!=null) {
+        setIntegratedParents(allLinkedPagesOrDBs)
+      }
+    }
+    getIntegrationParents()
+  }, [])
+
+  useEffect(() => {
+  }, [integratedParents])
+
+  useEffect(() => {
+
+    const selectedIntegrationParent = integratedParents.find(parent => parent.id === selectedIntegrationParentId)
+
+    console.log('on change of integrated parents two ' + JSON.stringify(selectedIntegrationParent))
+
+    setIntegrationParent(selectedIntegrationParent)
+
+  }, [selectedIntegrationParentId])
+
+  // const getTitleOfSelectedParent = (parentObj) => {
+  //   if (parentObj==null) {
+  //     return ''
+  //   }
+  //   const { title } = parentObj
+  //   return title==null ? '' : title
+  // }
+
+  const onParentSelect = (event) => {
+    setSelectedIntegrationParentId(event.target.value)
+    // use this parentID to lookup parent obj and save it to local storage
+    // const title = getTitleOfSelectedParent(event.target.value)
+    // console.log(title)
+  }
 
   return (
     <div style={style.root}>
@@ -136,15 +171,39 @@ const Popup = () => {
             <Button variant="contained" color="primary" onClick={beginAuthFlow}>
               Connect with Notion
             </Button> :
-              <Button variant="contained" color="error" onClick={() => console.log('disconnect clicked')}>
+              <Button variant="contained" color="error" onClick={() => {
+                disconnectNotion().then(r => setNotionLinked(false))
+              }}>
                 Disconnect
               </Button>
           }
         </Grid>
-        <Grid item xs={3}>
-          {/*{Replace this with pages and dbs from notion search}*/}
+        <Grid item xs={12}>
+          {
+            notionLinked &&
+            <FormControl sx={{
+              minWidth: 120
+            }}>
+              <InputLabel id="select-parent-page-or-db">Parent Page or DB</InputLabel>
+              <Select
+                labelId="select-parent-page-or-db"
+                id="parent-page-or-db"
+                value={selectedIntegrationParentId ?? ''}
+                label="ParentPage"
+                onChange={(e) => onParentSelect(e)}
+              >
+                {
+                  Array.isArray(integratedParents) &&
+                  integratedParents.map(parent => {
+                    return (
+                      <MenuItem key={parent.id} value={parent.id}> {parent.title} </MenuItem>
+                    )
+                  })
+                }
+              </Select>
+            </FormControl>
+          }
         </Grid>
-
       </Grid>
     </div>
   );
