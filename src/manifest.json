@@ -3,12 +3,14 @@
   "name": "chatGPT save history",
   "description": "A chrome extension to save chatGPT history",
   "options_page": "options.html",
+  "host_permissions": ["https://api.notion.com/*"],
   "permissions": [
     "storage",
     "tabs",
     "activeTab",
     "contextMenus",
     "<all_urls>",
+    "https://api.notion.com/*",
     "identity",
     "background",
     "runtime"
@@ -16,12 +18,12 @@
   "background": { "service_worker": "background.bundle.js" },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "notion-logo.svg"
+    "default_icon": "icon-128.png"
   },
   "chrome_url_overrides": {
   },
   "icons": {
-    "128": "notion-logo.svg"
+    "128": "icon-128.png"
   },
   "content_scripts": [
     {

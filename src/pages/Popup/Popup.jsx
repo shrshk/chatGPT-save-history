@@ -1,7 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./Popup.css";
 import { Button, Grid, SvgIcon, Typography } from "@mui/material";
-import NotionLogoPath from "../../../logos/notion-logo.svg";
+import { useChromeStorageLocal } from 'use-chrome-storage'
+import { searchNotion } from '../../../utils/notionClient'
+// import NotionLogoPath from "../../../logos/notion-logo.svg";
+import { getLocalStorageKey, setLocalStorageDataAfterAuth, userDataToMap } from '../../../utils/storageUtil'
 
 const style = {
   root: {
@@ -13,18 +16,11 @@ const style = {
   },
 }
 
-const NotionLogo = () => {
-  return (
-    <SvgIcon path={NotionLogoPath} fontSize='small' color='primary' />
-  )
-}
-
-const getLocalStorageKey = () => {
-  if (!chrome.runtime.id) {
-    return null
-  }
-  return `${chrome.runtime.id}_chatGPTSaveNotion`
-}
+// const NotionLogo = () => {
+//   return (
+//     <SvgIcon path={NotionLogoPath} fontSize='small' color='primary' />
+//   )
+// }
 
 const beginAuthFlow = async () => {
   const redirectUri = 'https://' + chrome.runtime.id +
@@ -55,7 +51,7 @@ const beginAuthFlow = async () => {
     await setLocalStorageDataAfterAuth(authTokenResponse)
 
   } else {
-    console.log(chrome.identity + " chrome indentity");
+    console.log(chrome.identity + " chrome identity");
   }
 }
 
@@ -76,84 +72,50 @@ async function getAuthTokenForCode(code) {
   }
 }
 
-const getFromLocalStorage = async (key) => {
-  if (key==null) {
-    console.log('null key provided to getFromLocalStorage')
-    return
-  }
-  return await chrome.storage.local.get([key]);
-}
-
-const setToLocalStorage = async (key, value) => {
-  if (key==null) {
-    console.log('null key provided setToLocalStorage')
-    return
-  }
-
-  await chrome.storage.local.set({ [key]: value });
-}
-
-const setLocalStorageDataAfterAuth = async (authTokenResponse) => {
-
-  const localStorageKey = getLocalStorageKey()
-
-  if (localStorageKey == null) {
-    console.log('failed to get extensionId before setting user data in local storage')
-    return
-  }
-
-  await setToLocalStorage(localStorageKey, {
-    'integrationDB': null,
-    'integrationPage': null,
-    'authInfo': authTokenResponse
-  })
-
-}
-
-const getUserDataFromLocalStorage = async () => {
-  const localStorageKey = getLocalStorageKey()
-
-  if (localStorageKey == null) {
-    console.log('failed to get extensionId before getting user data from local storage')
-    return
-  }
-
-  const savedRes = await getFromLocalStorage(localStorageKey)
-
-  console.log('all of saved ' + JSON.stringify(savedRes))
-
-  const savedMap = new Map(Object.entries(savedRes[localStorageKey]))
-
-  console.log(savedMap.get('integrationDB') + ' integrationDB')
-  console.log(savedMap.get('integrationPage') + ' integrationPage')
-  console.log(JSON.stringify(savedMap.get('authInfo')) + ' auth Info')
-  console.log(savedMap.get('authInfo').access_token + ' access token')
-
-  return savedMap
-}
-
-const testLocalStorage = async () => {
-  const extensionId = chrome.runtime.id
-  const localStorageKey = `${extensionId}_chatGPTSaveNotion`
-
-  const storageData = await getFromLocalStorage(localStorageKey)
-
-  const savedMap = new Map(Object.entries(storageData[localStorageKey]))
-  savedMap.set('integrationPage', null)
-
-  await setToLocalStorage(localStorageKey, Object.fromEntries(savedMap))
-
-  const res = await getFromLocalStorage(localStorageKey)
-  console.log('res ' + JSON.stringify(res))
-
-}
+// const testLocalStorage = async () => {
+//   const extensionId = chrome.runtime.id
+//   const localStorageKey = `${extensionId}_chatGPTSaveNotion`
+//
+//   const storageData = await getFromLocalStorage(localStorageKey)
+//
+//   const savedMap = new Map(Object.entries(storageData[localStorageKey]))
+//   savedMap.set('integrationPage', null)
+//
+//   await setToLocalStorage(localStorageKey, Object.fromEntries(savedMap))
+//
+//   const res = await getFromLocalStorage(localStorageKey)
+//   console.log('res ' + JSON.stringify(res))
+//
+// }
 
 const Popup = () => {
 
+  const localStorageKey = getLocalStorageKey()
+
+  const [ notionLinked, setNotionLinked] = useState(false)
+  const [ linkedPageId, setLinkedPageId ] = useState(null)
+  const [ linkedDBId, setLinkedDBId ] = useState(null)
+
+  const [value, isPersistent, error] = useChromeStorageLocal(localStorageKey);
+
   useEffect(() => {
-
+    if (value) {
+      setNotionLinked(true)
+      let userDataMap = userDataToMap(value)
+      if (!userDataMap) {
+        return
+      }
+      const linkedDBId = userDataMap.get('integrationDBId')
+      if (linkedDBId!=null) {
+        setLinkedDBId(linkedDBId)
+        return
+      }
+      const linkedPageId = userDataMap.get('integrationPageId')
+      if (linkedPageId!=null) {
+        setLinkedPageId(linkedPageId)
+      }
+    }
   })
-
 
   return (
     <div style={style.root}>
@@ -169,9 +131,18 @@ const Popup = () => {
       >
 
         <Grid item xs={3}>
-          <Button variant="contained" color="primary" onClick={getUserDataFromLocalStorage}>
-            Connect with Notion
-          </Button>
+          {
+            !notionLinked ?
+            <Button variant="contained" color="primary" onClick={beginAuthFlow}>
+              Connect with Notion
+            </Button> :
+              <Button variant="contained" color="error" onClick={() => console.log('disconnect clicked')}>
+                Disconnect
+              </Button>
+          }
+        </Grid>
+        <Grid item xs={3}>
+          {/*{Replace this with pages and dbs from notion search}*/}
         </Grid>
 
       </Grid>
