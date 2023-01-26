@@ -19,7 +19,12 @@ export const searchNotion = async () => {
     console.log('no notion client found ')
     return
   }
-  return await notionClient.search({})
+  return await notionClient.search({
+    filter: {
+      value: 'database',
+      property: 'object'
+    }
+  })
 }
 
 export const getAllLinkedPagesOrDatabases = async () => {
@@ -81,4 +86,70 @@ const getTitleFromTitleArr = (titleArr) => {
   const titleObj = titleArr[0]
 
   return titleObj?.text?.content
+}
+
+export const createPage = async (createPageRequest) => {
+  if (!notionClient) {
+    console.log('no notionClient found bailing out')
+    return null
+  }
+
+  const { integrationParent, createPageTitle, createPageData } = createPageRequest
+
+  const children = await convertMarkdownToNotionBlocks(createPageData)
+  const { type, id } = integrationParent
+
+  let parent = {}
+
+  if (type === 'database') {
+    parent.database_id = id
+  } else if (type === 'page') {
+    parent.page_id = id
+  }
+
+  let res;
+
+  try {
+    res = await notionClient.pages.create({
+      parent,
+      properties: {
+        Name: {
+          title: [
+            {
+              text: {
+                content: createPageTitle,
+              },
+            },
+          ],
+        }
+      },
+      children
+    });
+  } catch (e) {
+    console.log('error creating page in notion ' + e)
+    res = {
+      errorMessage: 'failed to create page in notion',
+      exception: e.toString()
+    }
+  }
+
+  return res
+}
+
+const convertMarkdownToNotionBlocks = async (markdown) => {
+  const res = await fetch('https://notion.computersandtacos.com/markdownToNotion', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      markdown
+    })
+  })
+
+  const data = await res.json()
+
+  console.log(JSON.stringify(data) + ' json res')
+
+  return data.notionBlocks
 }

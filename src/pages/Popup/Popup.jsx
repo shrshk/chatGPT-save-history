@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Popup.css";
-import { Button, Grid, SvgIcon, Typography } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import { useChromeStorageLocal } from 'use-chrome-storage'
 import { getAllLinkedPagesOrDatabases } from '../../../utils/notionClient'
 import { InputLabel, MenuItem, FormControl, Select } from '@mui/material'
@@ -15,12 +15,6 @@ const style = {
     textAlign: 'center',
   },
 }
-
-// const NotionLogo = () => {
-//   return (
-//     <SvgIcon path={NotionLogoPath} fontSize='small' color='primary' />
-//   )
-// }
 
 const beginAuthFlow = async () => {
   const redirectUri = 'https://' + chrome.runtime.id +
@@ -107,12 +101,13 @@ const Popup = () => {
       }
 
       const selectedIntegrationParent = userDataMap.get('integrationParent')
+      console.log(selectedIntegrationParent + ' selectedIntegrationParent')
       if (selectedIntegrationParent!=null) {
         setSelectedIntegrationParentId(selectedIntegrationParent?.id)
       }
 
     }
-  })
+  }, [value])
 
   useEffect(() => {
     const getIntegrationParents = async () => {
@@ -133,17 +128,17 @@ const Popup = () => {
 
     console.log('on change of integrated parents two ' + JSON.stringify(selectedIntegrationParent))
 
-    setIntegrationParent(selectedIntegrationParent)
+    if (!selectedIntegrationParent) {
+      return
+    }
+
+    setIntegrationParent(selectedIntegrationParent).then(
+      () => {
+        console.log('successfully set integrationParent to local storage')
+      }
+    )
 
   }, [selectedIntegrationParentId])
-
-  // const getTitleOfSelectedParent = (parentObj) => {
-  //   if (parentObj==null) {
-  //     return ''
-  //   }
-  //   const { title } = parentObj
-  //   return title==null ? '' : title
-  // }
 
   const onParentSelect = (event) => {
     setSelectedIntegrationParentId(event.target.value)
@@ -190,6 +185,7 @@ const Popup = () => {
                 id="parent-page-or-db"
                 value={selectedIntegrationParentId ?? ''}
                 label="ParentPage"
+                defaultValue=''
                 onChange={(e) => onParentSelect(e)}
               >
                 {

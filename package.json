@@ -19,7 +19,6 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.1",
     "@notionhq/client": "^2.2.3",
-    "@tryfabric/martian": "^1.2.4",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hot-loader": "^4.13.1",

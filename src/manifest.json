@@ -3,14 +3,9 @@
   "name": "chatGPT save history",
   "description": "A chrome extension to save chatGPT history",
   "options_page": "options.html",
-  "host_permissions": ["https://api.notion.com/*"],
+  "host_permissions": ["https://api.notion.com/*", "https://notion.computersandtacos.com/*"],
   "permissions": [
     "storage",
-    "tabs",
-    "activeTab",
-    "contextMenus",
-    "<all_urls>",
-    "https://api.notion.com/*",
     "identity",
     "background",
     "runtime"
