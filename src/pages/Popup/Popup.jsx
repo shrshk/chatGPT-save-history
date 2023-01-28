@@ -101,7 +101,7 @@ const Popup = () => {
       }
     }
     getIntegrationParents()
-  }, [])
+  }, [notionLinked])
 
   useEffect(() => {
   }, [integratedParents])
