@@ -27,7 +27,7 @@ const Options: React.FC<Props> = () => {
 
     <Grid item xs={3}>
       <Typography variant="h6" sx={style.title}>
-        Welcome to chatGPT save to Notion, use popup window to connect to a notion database to save chat history.
+        Welcome to chatGPT save to Notion, use popup window to link notion api, select a parent database and save chat history.
       </Typography>
     </Grid>
 

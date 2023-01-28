@@ -66,22 +66,6 @@ async function getAuthTokenForCode(code) {
   }
 }
 
-// const testLocalStorage = async () => {
-//   const extensionId = chrome.runtime.id
-//   const localStorageKey = `${extensionId}_chatGPTSaveNotion`
-//
-//   const storageData = await getFromLocalStorage(localStorageKey)
-//
-//   const savedMap = new Map(Object.entries(storageData[localStorageKey]))
-//   savedMap.set('integrationPage', null)
-//
-//   await setToLocalStorage(localStorageKey, Object.fromEntries(savedMap))
-//
-//   const res = await getFromLocalStorage(localStorageKey)
-//   console.log('res ' + JSON.stringify(res))
-//
-// }
-
 const Popup = () => {
 
   const localStorageKey = getLocalStorageKey()

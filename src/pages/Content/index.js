@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 // Import the component that you want to render
-import FabComp from './FabComp';
+import { FabComp } from './FabComp';
 
 // Create the container element
 const container = document.createElement("div");

@@ -5,6 +5,10 @@ const { Client } = require('@notionhq/client')
 let notionClient = null;
 
 (async () => {
+  await createNotionClient()
+})()
+
+const createNotionClient = async () => {
   const authToken = await getAuthToken()
   if (!authToken) {
     return
@@ -12,12 +16,12 @@ let notionClient = null;
   notionClient = new Client({
     auth: authToken
   })
-})()
+}
 
 export const searchNotion = async () => {
   if (!notionClient) {
     console.log('no notion client found ')
-    return
+    await createNotionClient()
   }
   return await notionClient.search({
     filter: {
@@ -89,28 +93,28 @@ const getTitleFromTitleArr = (titleArr) => {
 }
 
 export const createPage = async (createPageRequest) => {
-  if (!notionClient) {
-    console.log('no notionClient found bailing out')
-    return null
-  }
-
-  const { integrationParent, createPageTitle, createPageData } = createPageRequest
-
-  const children = await convertMarkdownToNotionBlocks(createPageData)
-  const { type, id } = integrationParent
-
-  let parent = {}
-
-  if (type === 'database') {
-    parent.database_id = id
-  } else if (type === 'page') {
-    parent.page_id = id
-  }
 
   let res;
 
   try {
-    res = await notionClient.pages.create({
+    if (!notionClient) {
+      await createNotionClient()
+    }
+
+    const { integrationParent, createPageTitle, createPageData } = createPageRequest
+
+    const { type, id } = integrationParent
+
+    let parent = {}
+
+    if (type === 'database') {
+      parent.database_id = id
+    } else if (type === 'page') {
+      parent.page_id = id
+    }
+
+    const children = await convertMarkdownToNotionBlocks(createPageData)
+    await notionClient.pages.create({
       parent,
       properties: {
         Name: {
@@ -125,10 +129,15 @@ export const createPage = async (createPageRequest) => {
       },
       children
     });
+    res = {
+      error: false,
+      message: 'page successfully saved with title ' + createPageTitle
+    }
   } catch (e) {
     console.log('error creating page in notion ' + e)
     res = {
-      errorMessage: 'failed to create page in notion',
+      error: true,
+      message: 'failed to create page in notion',
       exception: e.toString()
     }
   }
@@ -143,13 +152,12 @@ const convertMarkdownToNotionBlocks = async (markdown) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      markdown
+      markdown,
+      method: 'markdownToRichText'
     })
   })
 
   const data = await res.json()
-
-  console.log(JSON.stringify(data) + ' json res')
 
   return data.notionBlocks
 }
