@@ -16,54 +16,6 @@ const style = {
   },
 }
 
-const beginAuthFlow = async () => {
-  const redirectUri = 'https://' + chrome.runtime.id +
-    '.chromiumapp.org/options.html';
-
-  const authUrl = `https://api.notion.com/v1/oauth/authorize?client_id=3636a610-ed79-4965-8312-cabfd9fd3075&response_type=code&owner=user&redirect_uri=${redirectUri}`;
-
-  if (chrome.identity) {
-    const responseUrl = await chrome.identity.launchWebAuthFlow({url: authUrl, interactive: true});
-
-    if (responseUrl==null) {
-      console.log('no resp url')
-      return;
-    }
-
-    const urlParams = new URLSearchParams(new URL(responseUrl).search)
-    const code = urlParams.get('code');
-
-    if (code == null) {
-      console.log('did not  get code')
-      return;
-    }
-
-    const authTokenResponse = await getAuthTokenForCode(code)
-
-    await setLocalStorageDataAfterAuth(authTokenResponse)
-
-  } else {
-    console.log(chrome.identity + " chrome identity");
-  }
-}
-
-async function getAuthTokenForCode(code) {
-  try {
-    const res = await fetch('https://notion.computersandtacos.com/authToken', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        code
-      })
-    })
-    return await res.json()
-  } catch (e) {
-    console.log('error getting auth token' + e)
-  }
-}
-
 const Popup = () => {
 
   const localStorageKey = getLocalStorageKey()
@@ -124,6 +76,14 @@ const Popup = () => {
     setSelectedIntegrationParentId(event.target.value)
   }
 
+  const callOptionsPage = () => {
+    if (!chrome.runtime) {
+      console.log('no chrome runtime, bailing out')
+      return
+    }
+    chrome.runtime.openOptionsPage()
+  }
+
   return (
     <div style={style.root}>
       <Typography variant="h6" sx={style.title}>
@@ -136,15 +96,26 @@ const Popup = () => {
         alignItems="center"
         justifyContent="center"
       >
-
         <Grid item xs={3}>
           {
-            !notionLinked ?
-            <Button variant="contained" color="primary" onClick={beginAuthFlow}>
-              Connect with Notion
-            </Button> :
+            !notionLinked && (
+              <Typography variant='subtitle2' align='center' sx={{
+                color: '#990014'
+              }}>
+                Notion account not linked, click below
+              </Typography>
+            )
+          }
+        </Grid>
+        <Grid item xs={3}>
+          {
+            !notionLinked ? (
+              <Button variant="contained" color="primary" onClick={() => callOptionsPage()}>
+                Connect to Notion
+              </Button>
+              ) :
               <Button variant="contained" color="error" onClick={() => {
-                disconnectNotion().then(r => setNotionLinked(false))
+                disconnectNotion().then(() => setNotionLinked(false))
               }}>
                 Disconnect
               </Button>

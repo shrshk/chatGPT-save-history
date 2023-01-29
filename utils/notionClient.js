@@ -4,13 +4,10 @@ const { Client } = require('@notionhq/client')
 
 let notionClient = null;
 
-(async () => {
-  await createNotionClient()
-})()
-
-const createNotionClient = async () => {
+export const createNotionClient = async () => {
   const authToken = await getAuthToken()
   if (!authToken) {
+    console.log('no auth token found')
     return
   }
   notionClient = new Client({
@@ -18,10 +15,18 @@ const createNotionClient = async () => {
   })
 }
 
+(async () => {
+  await createNotionClient()
+})()
+
 export const searchNotion = async () => {
   if (!notionClient) {
     console.log('no notion client found ')
     await createNotionClient()
+  }
+  if (!notionClient) {
+    console.log('no notion client found ')
+    return
   }
   return await notionClient.search({
     filter: {
@@ -99,6 +104,11 @@ export const createPage = async (createPageRequest) => {
   try {
     if (!notionClient) {
       await createNotionClient()
+    }
+
+    if (!notionClient) {
+      console.log('still no notion client')
+      return
     }
 
     const { integrationParent, createPageTitle, createPageData } = createPageRequest

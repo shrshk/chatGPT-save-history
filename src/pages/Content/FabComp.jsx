@@ -255,6 +255,11 @@ export const FabComp = () => {
 
     const saveToNotion = async () => {
 
+        if (!value) {
+            setNotionLinked(false)
+            return
+        }
+
         setStatus({
             error: false,
             loading: true,
