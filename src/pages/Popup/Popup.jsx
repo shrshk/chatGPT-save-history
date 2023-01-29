@@ -85,7 +85,7 @@ const Popup = () => {
       }
 
       const selectedIntegrationParent = userDataMap.get('integrationParent')
-      console.log(selectedIntegrationParent + ' selectedIntegrationParent')
+
       if (selectedIntegrationParent!=null) {
         setSelectedIntegrationParentId(selectedIntegrationParent?.id)
       }
@@ -103,14 +103,12 @@ const Popup = () => {
     getIntegrationParents()
   }, [notionLinked])
 
-  useEffect(() => {
-  }, [integratedParents])
+  // useEffect(() => {
+  // }, [integratedParents])
 
   useEffect(() => {
 
     const selectedIntegrationParent = integratedParents.find(parent => parent.id === selectedIntegrationParentId)
-
-    console.log('on change of integrated parents two ' + JSON.stringify(selectedIntegrationParent))
 
     if (!selectedIntegrationParent) {
       return
@@ -126,9 +124,6 @@ const Popup = () => {
 
   const onParentSelect = (event) => {
     setSelectedIntegrationParentId(event.target.value)
-    // use this parentID to lookup parent obj and save it to local storage
-    // const title = getTitleOfSelectedParent(event.target.value)
-    // console.log(title)
   }
 
   return (
