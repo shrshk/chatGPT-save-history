@@ -40,8 +40,6 @@ const beginAuthFlow = async () => {
 
     const authTokenResponse = await getAuthTokenForCode(code)
 
-    console.log('authToken response from server is ' + JSON.stringify(authTokenResponse))
-
     await setLocalStorageDataAfterAuth(authTokenResponse)
 
   } else {

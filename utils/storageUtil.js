@@ -72,8 +72,6 @@ export const userDataToMap = (userDataFromStorage) => {
     return
   }
 
-  console.log('what is userDataFromStorage ' + JSON.stringify(userDataFromStorage))
-
   const authInfoObj = userDataFromStorage['authInfo']
   const accessToken = authInfoObj.access_token
   const avatarUrl = authInfoObj.workspace_icon
