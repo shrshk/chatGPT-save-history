@@ -4,7 +4,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import { useChromeStorageLocal } from 'use-chrome-storage'
 import { getAllLinkedPagesOrDatabases } from '../../../utils/notionClient'
 import { InputLabel, MenuItem, FormControl, Select } from '@mui/material'
-import { getLocalStorageKey, setLocalStorageDataAfterAuth, userDataToMap, disconnectNotion, setIntegrationParent } from '../../../utils/storageUtil'
+import { getLocalStorageKey, userDataToMap, disconnectNotion, setIntegrationParent } from '../../../utils/storageUtil'
 
 const style = {
   root: {
