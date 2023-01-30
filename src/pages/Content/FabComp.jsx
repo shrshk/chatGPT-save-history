@@ -49,7 +49,7 @@ const turnToMarkdown = () => {
 
     turndown.addRule('code', {
         filter: (node) => node.nodeName === 'CODE',
-        replacement: (content) => content,
+        replacement: (content) => content.trim(),
     });
 
 
@@ -264,9 +264,9 @@ export const FabComp = () => {
         setDialogOpen(false)
         setFabOpen(true)
 
-        if (!chrome.runtime) {
-            return
-        }
+        // if (!chrome.runtime) {
+        //     return
+        // }
 
         const userDataMap = userDataToMap(value)
 

@@ -44,7 +44,9 @@ const beginAuthFlow = async () => {
       return;
     }
 
-    const authTokenResponse = await getAuthTokenForCode(code)
+    const authTokenResponse = await getAuthTokenForCode(code, redirectUri)
+
+   // console.log('auth response ' + JSON.stringify(authTokenResponse))
 
     await setLocalStorageDataAfterAuth(authTokenResponse)
 
@@ -53,7 +55,7 @@ const beginAuthFlow = async () => {
   }
 }
 
-async function getAuthTokenForCode(code: string) {
+async function getAuthTokenForCode(code: string, redirectUri: string) {
   try {
     const res = await fetch('https://notion.computersandtacos.com/authToken', {
       method: 'POST',
@@ -61,7 +63,8 @@ async function getAuthTokenForCode(code: string) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        code
+        code,
+        redirectUri
       })
     })
     return await res.json()
