@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "chatGPT save history to notion",
-  "version": "0.0.0.2",
+  "version": "0.0.0.3",
   "description": "A chrome extension to save chatGPT history to notion",
   "options_page": "options.html",
   "host_permissions": ["https://api.notion.com/*", "https://notion.computersandtacos.com/*"],
