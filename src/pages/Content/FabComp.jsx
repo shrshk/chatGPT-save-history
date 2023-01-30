@@ -5,11 +5,6 @@ import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions'
-import { Backdrop } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-import MinimizeIcon from '@mui/icons-material/Minimize';
-import CachedIcon from '@mui/icons-material/Cached';
-import IconButton from '@mui/material/IconButton'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import { CircularProgress } from '@mui/material'
@@ -324,9 +319,6 @@ export const FabComp = () => {
 
     const markdownComp = () => {
         return (
-          // <Typography variant={'body1'}>
-          //     {notionPageData}
-          // </Typography>
           <ReactMarkdown children={notionPageData} />
         )
     }
@@ -358,13 +350,6 @@ export const FabComp = () => {
           <Dialog
             open={dialogOpen}
             onClose={handleDialogClose}
-            // disableEscapeKeyDown
-            // disableEnforceFocus
-            // PaperProps={{
-            //     sx:{
-            //         pointerEvents: 'auto'
-            //     }
-            // }}
             maxWidth='xs'
             sx={{
                 margin: 0,
@@ -385,18 +370,6 @@ export const FabComp = () => {
                             fullWidth
                           />
                       </Box>
-                      {/*<Box>*/}
-                      {/*    <IconButton*/}
-                      {/*    onClick={syncPageData}>*/}
-                      {/*        <CachedIcon />*/}
-                      {/*    </IconButton>*/}
-                      {/*</Box>*/}
-                      {/*<Box>*/}
-                      {/*    <IconButton*/}
-                      {/*      onClick={(e) => handleDialogClose(e, "minimize")}>*/}
-                      {/*        <CloseIcon />*/}
-                      {/*    </IconButton>*/}
-                      {/*</Box>*/}
                   </Box>
               </DialogTitle>
               <DialogContent>
