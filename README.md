@@ -30,4 +30,4 @@ If you encounter any issues or have any feature requests, please feel free to op
 You can reach me on **[https://www.computersandtacos.com/](https://www.computersandtacos.com/)**
 
 ## **Donation**
-**[Venmo](https://www.computersandtacos.com/)**
+**[Venmo](https://account.venmo.com/u/shrshk7)**
