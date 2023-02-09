@@ -341,6 +341,7 @@ export const FabComp = () => {
               </Typography>
               <Typography variant='body2'>
                   Use this extension's popup to link a notion account and select a parent database to save the chat.
+                  If you just installed the app, please refresh the page, still doesn't work please contact me.
               </Typography>
           </>
         )
