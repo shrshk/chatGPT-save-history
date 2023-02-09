@@ -9,8 +9,7 @@
     "storage",
     "identity",
     "background",
-    "runtime",
-    "tabs"
+    "runtime"
   ],
   "background": { "service_worker": "background.bundle.js" },
   "action": {
