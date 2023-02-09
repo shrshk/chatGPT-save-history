@@ -200,13 +200,6 @@ export const FabComp = () => {
             }, 2000);
             return () => clearTimeout(timeoutId);
         }
-
-        if (status.loading) {
-            const timeoutId = setTimeout(() => {
-                setStatus({ loading: false, success: false, error: false });
-            }, 5000);
-            return () => clearTimeout(timeoutId);
-        }
     }, [status]);
 
     const getFabInternal = () => {

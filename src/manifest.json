@@ -8,8 +8,7 @@
   "permissions": [
     "storage",
     "identity",
-    "background",
-    "runtime"
+    "background"
   ],
   "background": { "service_worker": "background.bundle.js" },
   "action": {

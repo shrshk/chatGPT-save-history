@@ -204,6 +204,15 @@ const Popup = () => {
                 </Button>
             }
           </Grid>
+          <Grid item xs={3}>
+            {
+              !notionLinked && (
+                <Typography variant='subtitle2'>
+                  Please refresh 'chat.openai.com' webpage after linking notion account.
+                </Typography>
+                )
+            }
+          </Grid>
           <Grid item xs={12}>
             {
               notionLinked &&
