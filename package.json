@@ -1,5 +1,5 @@
 {
-  "name": "chatGPT-save-history",
+  "name": "chatgpt-save-history",
   "version": "4.4.0",
   "description": "A chrome extension to save chatGPT history to notion",
   "license": "MIT",

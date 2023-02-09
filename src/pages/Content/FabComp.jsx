@@ -200,6 +200,13 @@ export const FabComp = () => {
             }, 2000);
             return () => clearTimeout(timeoutId);
         }
+
+        if (status.loading) {
+            const timeoutId = setTimeout(() => {
+                setStatus({ loading: false, success: false, error: false });
+            }, 5000);
+            return () => clearTimeout(timeoutId);
+        }
     }, [status]);
 
     const getFabInternal = () => {
@@ -264,9 +271,10 @@ export const FabComp = () => {
         setDialogOpen(false)
         setFabOpen(true)
 
-        // if (!chrome.runtime) {
-        //     return
-        // }
+        if (!chrome.runtime) {
+            console.log('chrome runtime is not available the horror')
+            return
+        }
 
         const userDataMap = userDataToMap(value)
 
